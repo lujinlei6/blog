@@ -2,7 +2,11 @@
 title: redis源码编译安装
 date: 2026-09-06
 description: 源码编译安装 redis，灵活定制各种功能。附编译参数、systemd 托管与生产环境验证的完整流程。
+<<<<<<< HEAD
 category: compile
+=======
+category: redis
+>>>>>>> b73205db40d47c038fb2d5f939238ff2db72c20e
 tags:
   - redis
   - 编译安装
