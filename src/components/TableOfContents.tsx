@@ -105,7 +105,7 @@ export function TableOfContentsDrawer({ headings }: Readonly<{ headings: Heading
       if (timer) clearTimeout(timer)
       // Brief grace period so crossing the small gap between the trigger band
       // and the panel doesn't snap the drawer shut.
-      timer = setTimeout(() => setOpen(false), 180)
+      timer = setTimeout(() => setOpen(false), 260)
     }
 
     trigger.addEventListener('pointerenter', enter)
@@ -129,14 +129,14 @@ export function TableOfContentsDrawer({ headings }: Readonly<{ headings: Heading
       <div
         ref={triggerRef}
         aria-hidden
-        className="fixed inset-y-0 left-0 z-40 hidden w-6 lg:block"
+        className="fixed inset-y-0 left-0 z-[60] hidden w-6 lg:block"
       />
       {/* The slide-in panel. */}
       <div
         ref={panelRef}
         aria-hidden={!open}
         className={cx(
-          'fixed inset-y-0 left-0 z-40 hidden w-80 transition-transform duration-[var(--dur-base)] ease-out-expo lg:block',
+          'fixed inset-y-0 left-0 z-[60] hidden w-80 transition-transform duration-500 ease-out-expo lg:block',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
