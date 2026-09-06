@@ -1,0 +1,219 @@
+/* Article typography. This file is the reading surface — it deliberately
+   avoids glass, glow and bento. Accent colour appears on links, code and the
+   title rule, never as a tint behind body copy. */
+
+.prose {
+  max-width: var(--prose-width);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  color: var(--color-ink-100);
+  /* Justified Chinese produces rivers of whitespace because every glyph is the
+     same width. Left-align is the modern standard. */
+  text-align: left;
+  /* Never break-all; let the browser apply native CJK line-breaking rules. */
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.prose > * + * {
+  margin-top: 1.4em;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  scroll-margin-top: 6rem;
+  color: var(--color-ink-100);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.prose h2 {
+  margin-top: 2.4em;
+  font-size: 1.625rem;
+  line-height: 1.35;
+}
+
+.prose h3 {
+  margin-top: 2em;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.prose h4 {
+  margin-top: 1.8em;
+  font-size: 1.0625rem;
+}
+
+.prose a {
+  color: var(--color-aurora-cyan);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--color-aurora-cyan) 35%, transparent);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--dur-fast) var(--ease-out-expo);
+}
+
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
+
+.prose strong {
+  color: var(--color-ink-50);
+  font-weight: 650;
+}
+
+.prose em {
+  color: var(--color-ink-100);
+  font-style: normal;
+  /* Chinese has no italic; a colour shift plus underline communicates emphasis
+     without synthesising slanted glyphs. */
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--color-aurora-violet) 50%, transparent);
+  text-decoration-style: dashed;
+  text-underline-offset: 0.25em;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5em;
+}
+
+.prose li + li {
+  margin-top: 0.5em;
+}
+
+.prose ul > li {
+  list-style-type: disc;
+}
+.prose ul > li::marker {
+  color: var(--color-aurora-violet);
+}
+.prose ol > li {
+  list-style-type: decimal;
+}
+.prose ol > li::marker {
+  color: var(--color-ink-600);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--color-aurora-violet);
+  padding-left: 1.25em;
+  color: var(--color-ink-400);
+  font-style: normal;
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+.prose hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-void-700) 20%,
+    var(--color-void-700) 80%,
+    transparent
+  );
+}
+
+/* Inline code gets inline padding so Latin glyphs don't collide with the
+   surrounding CJK characters. */
+.prose :not(pre) > code {
+  padding: 0.15em 0.4em;
+  margin-inline: 0.1em;
+  border-radius: 0.375rem;
+  background-color: var(--color-void-800);
+  border: 1px solid var(--color-void-700);
+  color: var(--color-aurora-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  white-space: nowrap;
+}
+
+.prose pre {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-void-700);
+  /* Shiki writes the theme background inline; override it to our own surface
+     so code blocks belong to this design system. */
+  background-color: var(--color-void-950) !important;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  letter-spacing: 0;
+  box-shadow: var(--shadow-card);
+}
+
+.prose pre code {
+  font-family: var(--font-mono);
+  background: none;
+  border: 0;
+  padding: 0;
+  white-space: pre;
+}
+
+/* Shiki renders with defaultColor:false, so each span carries both palettes as
+   variables and no inline colour — see build/markdown.ts. Dark is the
+   unconditional default so that with JS off, when data-theme is never written,
+   code still reads as monochrome ink instead of losing all colour. The light
+   rule wins on specificity. */
+.prose pre span {
+  color: var(--shiki-dark);
+}
+html[data-theme='light'] .prose pre span {
+  color: var(--shiki-light);
+}
+
+.prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.prose th,
+.prose td {
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--color-void-700);
+  text-align: left;
+}
+
+.prose th {
+  background-color: var(--color-void-850);
+  color: var(--color-ink-100);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.prose td {
+  color: var(--color-ink-400);
+}
+
+.prose img {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-void-700);
+}
+
+/* Heading anchors injected by rehype-autolink-headings. */
+.prose .anchor {
+  color: inherit;
+  text-decoration: none;
+}
+.prose .anchor::after {
+  content: '#';
+  margin-left: 0.4em;
+  color: var(--color-void-600);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out-expo);
+}
+.prose h2:hover .anchor::after,
+.prose h3:hover .anchor::after,
+.prose h4:hover .anchor::after {
+  opacity: 1;
+}

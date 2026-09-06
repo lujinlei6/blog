@@ -1,0 +1,73 @@
+import { Link } from '@tanstack/react-router'
+
+import { Container } from '~/components/Container'
+import { ThemeToggle } from '~/components/ThemeToggle'
+import { SITE } from '~/lib/site'
+
+const linkClass =
+  'text-sm text-ink-400 transition-colors duration-[var(--dur-fast)] ease-out-expo hover:text-ink-100'
+const linkActiveClass = 'text-ink-100'
+
+/**
+ * Nav is three items, so they fit at 320px and no hamburger menu is needed.
+ * The toggle is the header's only client-interactive part and is sized `h-8`
+ * rather than the footer's `h-9` to keep that 320px fit: logo + nav + toggle
+ * leaves ~18px of slack against the 280px the px-5 container allows.
+ */
+export function SiteHeader() {
+  return (
+    <header className="surface-glass sticky top-0 z-50 border-x-0 border-t-0">
+      <Container as="div" className="flex h-16 items-center justify-between gap-6">
+        <Link to="/" className="group flex items-center gap-2.5" aria-label={`${SITE.name} 首页`}>
+          <svg
+            viewBox="0 0 64 64"
+            className="h-7 w-7 shrink-0 transition-transform duration-[var(--dur-slow)] ease-spring group-hover:rotate-90"
+            aria-hidden
+          >
+            <defs>
+              <linearGradient id="hdr-aurora" x1="0" y1="0" x2="1" y2="1">
+                {/* Inline style, not the stopColor attribute: var() in a
+                    presentation attribute is not reliably supported. */}
+                <stop offset="0" style={{ stopColor: 'var(--color-aurora-cyan)' }} />
+                <stop offset="0.55" style={{ stopColor: 'var(--color-aurora-violet)' }} />
+                <stop offset="1" style={{ stopColor: 'var(--color-aurora-rose)' }} />
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="20" fill="none" stroke="url(#hdr-aurora)" strokeWidth="6" />
+            <circle cx="32" cy="32" r="6" fill="url(#hdr-aurora)" />
+          </svg>
+          <span className="font-mono text-base font-semibold tracking-[0.18em] text-ink-100">
+            {SITE.name}
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-2">
+          <nav className="flex items-center gap-1 sm:gap-2">
+            <Link
+              to="/"
+              activeOptions={{ exact: true }}
+              activeProps={{ className: linkActiveClass }}
+              className={linkClass}
+            >
+              首页
+            </Link>
+            <span aria-hidden className="text-void-600">
+              /
+            </span>
+            <Link to="/posts" activeProps={{ className: linkActiveClass }} className={linkClass}>
+              文章
+            </Link>
+            <span aria-hidden className="text-void-600">
+              /
+            </span>
+            <Link to="/about" activeProps={{ className: linkActiveClass }} className={linkClass}>
+              关于
+            </Link>
+          </nav>
+
+          <ThemeToggle />
+        </div>
+      </Container>
+    </header>
+  )
+}

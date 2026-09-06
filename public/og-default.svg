@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="aurora" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.55" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#f472b6"/>
+    </linearGradient>
+    <radialGradient id="poolViolet" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="poolCyan" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0v64" fill="none" stroke="#ffffff" stroke-opacity="0.045" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="#0a0a11"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <ellipse cx="940" cy="130" rx="420" ry="330" fill="url(#poolViolet)"/>
+  <ellipse cx="180" cy="540" rx="440" ry="300" fill="url(#poolCyan)"/>
+
+  <circle cx="118" cy="150" r="34" fill="none" stroke="url(#aurora)" stroke-width="10"/>
+  <circle cx="118" cy="150" r="10" fill="url(#aurora)"/>
+  <text x="176" y="164" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="40" font-weight="600" letter-spacing="12" fill="#eceaf4">VOID</text>
+
+  <text x="112" y="348" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="72" font-weight="600" fill="#eceaf4">在噪声里</text>
+  <text x="112" y="440" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="72" font-weight="600" fill="url(#aurora)">留一块空白</text>
+
+  <rect x="112" y="496" width="96" height="3" fill="url(#aurora)"/>
+  <text x="112" y="552" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="26" fill="#a3a1b8">前端工程 · 界面设计 · 技术决策</text>
+</svg>

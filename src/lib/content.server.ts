@@ -1,0 +1,193 @@
+import { parse as parseYaml } from 'yaml'
+import { z } from 'zod'
+
+import { readingMinutes } from '~/lib/reading-time'
+import type { AboutPage, Post, PostWithContent } from '~/lib/types'
+
+/**
+ * Globbed with `?raw` and `eager` so the Markdown is inlined into the server
+ * bundle at build time. Reading `content/` with `node:fs` instead would work in
+ * dev and 404 in production, because Nitro's entry is `.output/server/index.mjs`
+ * and `process.cwd()` there is not guaranteed to be the project root.
+ */
+const postSources = import.meta.glob('/content/posts/*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+
+const aboutSources = import.meta.glob('/content/about.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+
+/**
+ * The same documents rendered to HTML at build time by build/render-plugin.ts,
+ * which runs in Vite's Node process. The worker never loads Shiki: workerd
+ * rejects runtime WASM compilation, and grammar compilation would not fit the
+ * free plan's CPU budget per invocation either. Keys match the `?raw` globs.
+ */
+const postHtml = import.meta.glob<string>('/content/posts/*.md', {
+  query: '?rendered',
+  import: 'default',
+  eager: true,
+})
+
+const aboutHtml = import.meta.glob<string>('/content/about.md', {
+  query: '?rendered',
+  import: 'default',
+  eager: true,
+})
+
+const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+const postFrontmatter = z.object({
+  title: z.string().min(1),
+  date: z.coerce.date(),
+  updated: z.coerce.date().optional(),
+  description: z.string().min(1).max(200),
+  tags: z.array(z.string()).default([]),
+  cover: z.string().optional(),
+  draft: z.boolean().default(false),
+  featured: z.boolean().default(false),
+})
+
+const aboutFrontmatter = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1).max(200),
+})
+
+/** Splits on the first `---`/`---` fence and returns the body after it. */
+function splitFrontmatter(raw: string, file: string): { data: unknown; body: string } {
+  const match = FRONTMATTER_RE.exec(raw)
+  if (!match) {
+    throw new Error(`${file}: 缺少 frontmatter（文件必须以 --- 开头）`)
+  }
+  return { data: parseYaml(match[1]), body: raw.slice(match[0].length) }
+}
+
+function slugFromPath(path: string): string {
+  const file = path.split('/').pop() ?? path
+  return file.replace(/\.md$/, '')
+}
+
+type Source = { meta: Post }
+
+function buildSources(): Source[] {
+  const sources: Source[] = []
+
+  for (const [path, raw] of Object.entries(postSources)) {
+    const file = `content/${path.replace(/^\//, '')}`
+    const { data, body } = splitFrontmatter(raw, file)
+    const parsed = postFrontmatter.safeParse(data)
+    if (!parsed.success) {
+      throw new Error(`${file}: frontmatter 校验失败 — ${parsed.error.message}`)
+    }
+
+    const slug = slugFromPath(path)
+    if (!SLUG_RE.test(slug)) {
+      throw new Error(`${file}: slug "${slug}" 不合法，文件名只能用小写字母、数字和连字符`)
+    }
+    if (sources.some((source) => source.meta.slug === slug)) {
+      throw new Error(`${file}: slug "${slug}" 重复`)
+    }
+
+    const fm = parsed.data
+    // Drafts stay visible locally so they can be previewed before publishing.
+    if (fm.draft && import.meta.env.PROD) continue
+
+    sources.push({
+      meta: {
+        slug,
+        title: fm.title,
+        description: fm.description,
+        // ISO string, not a Date: server-function payloads are serialized and a
+        // string round-trips without depending on the serializer reviving dates.
+        date: fm.date.toISOString(),
+        updated: fm.updated?.toISOString(),
+        tags: fm.tags,
+        cover: fm.cover,
+        featured: fm.featured,
+        readingMinutes: readingMinutes(body),
+      },
+    })
+  }
+
+  return sources
+}
+
+/** Rendered HTML ships inside the bundle; a miss means the `?rendered` plugin
+    and the `?raw` glob disagree about what is in the content directory. */
+function renderedHtml(path: string, sources: Record<string, string>): string {
+  const html = sources[path]
+  if (html === undefined) {
+    throw new Error(`${path}: 缺少构建期渲染产物（?rendered glob 未命中）`)
+  }
+  return html
+}
+
+let cachedSources: Source[] | null = null
+
+function getSources(): Source[] {
+  cachedSources ??= buildSources()
+  return cachedSources
+}
+
+/** Newest first. ISO date strings sort chronologically with a plain compare. */
+export async function listPosts(): Promise<Post[]> {
+  return getSources()
+    .map((source) => source.meta)
+    .sort((a, b) => b.date.localeCompare(a.date))
+}
+
+export async function getPost(slug: string): Promise<PostWithContent | null> {
+  const source = getSources().find((item) => item.meta.slug === slug)
+  if (!source) return null
+
+  const contentHtml = renderedHtml(`/content/posts/${source.meta.slug}.md`, postHtml)
+  return { ...source.meta, contentHtml }
+}
+
+/**
+ * Featured posts first, then the newest remaining ones as filler, so the home
+ * page bento grid always has enough cards even if `featured` is unset.
+ */
+export async function getFeaturedPosts(limit: number): Promise<Post[]> {
+  const posts = await listPosts()
+  const featured = posts.filter((post) => post.featured)
+  const filler = posts.filter((post) => !post.featured)
+  return [...featured, ...filler].slice(0, limit)
+}
+
+/** Newest first, with rendered HTML — the RSS feed ships full content. */
+export async function getFeedPosts(limit: number): Promise<PostWithContent[]> {
+  const sources = getSources()
+    .slice()
+    .sort((a, b) => b.meta.date.localeCompare(a.meta.date))
+
+  return sources.slice(0, limit).map((source) => ({
+    ...source.meta,
+    contentHtml: renderedHtml(`/content/posts/${source.meta.slug}.md`, postHtml),
+  }))
+}
+
+export async function getAbout(): Promise<AboutPage> {
+  const sources = Object.values(aboutSources)
+  if (sources.length === 0) {
+    throw new Error('content/about.md 不存在')
+  }
+  const { data } = splitFrontmatter(sources[0], 'content/about.md')
+  const parsed = aboutFrontmatter.safeParse(data)
+  if (!parsed.success) {
+    throw new Error(`content/about.md: frontmatter 校验失败 — ${parsed.error.message}`)
+  }
+
+  const contentHtml = renderedHtml('/content/about.md', aboutHtml)
+  return {
+    title: parsed.data.title,
+    description: parsed.data.description,
+    contentHtml,
+  }
+}
