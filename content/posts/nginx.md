@@ -2,18 +2,10 @@
 title: nginx源码编译安装
 date: 2026-09-06
 description: 从编译依赖、企业级 configure 参数到 systemd 托管与生产目录规范，一篇把 Nginx 源码安装从零到生产讲透的实战笔记。
-<<<<<<< HEAD
 category: compile
 tags:
   - nginx
   - 编译安装
-=======
-category: nginx
-tags:
-  - nginx
-  - 编译安装
-  - LNMP
->>>>>>> b73205db40d47c038fb2d5f939238ff2db72c20e
 ---
 
 
