@@ -64,7 +64,7 @@ function Home() {
         {/* Fog layer over the aurora/cloud backdrop. The pointer wipes it away to
             reveal the clouds beneath; it is gated behind `.js` so with JS off the
             hero simply shows the backdrop. Content above sits on the same plane. */}
-        <RevealCanvas className="pointer-events-none absolute inset-0 h-full w-full rounded-card" />
+        <RevealCanvas className="pointer-events-none fixed inset-0 -z-[5] h-full w-full" />
 
         {/* Above the fold on purpose: no ScrollReveal here, because the hero is
             the LCP element and must paint from SSR HTML alone. */}

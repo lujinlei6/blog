@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { cx } from '~/lib/cx'
 import type { Heading } from '~/lib/types'
@@ -69,5 +69,81 @@ export function TableOfContents({ headings, showEyebrow = true }: Readonly<Table
         })}
       </ul>
     </nav>
+  )
+}
+
+/**
+ * Left-edge drawer variant for the desktop. The panel sits off-screen
+ * (translate-x-full) and slides in only when the pointer hovers the left edge
+ * of the viewport, so the reading column never has to fight it for space. On
+ * touch devices there is no hover, so this renders nothing — the mobile
+ * `<details>` disclosure is the fallback.
+ */
+export function TableOfContentsDrawer({ headings }: Readonly<{ headings: Heading[] }>) {
+  const [open, setOpen] = useState(false)
+  // The slim always-visible trigger band at the very left edge.
+  const triggerRef = useRef<HTMLDivElement>(null)
+  // The slide-in panel (covers the trigger band once open).
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    // No fine pointer -> no hover -> the drawer is unusable; let the caller's
+    // mobile disclosure handle it instead.
+    if (!window.matchMedia('(pointer: fine)').matches) return
+
+    const trigger = triggerRef.current
+    const panel = panelRef.current
+    if (!trigger || !panel) return
+
+    let timer: ReturnType<typeof setTimeout> | null = null
+
+    const enter = () => {
+      if (timer) clearTimeout(timer)
+      setOpen(true)
+    }
+    const leave = () => {
+      if (timer) clearTimeout(timer)
+      // Brief grace period so crossing the small gap between the trigger band
+      // and the panel doesn't snap the drawer shut.
+      timer = setTimeout(() => setOpen(false), 180)
+    }
+
+    trigger.addEventListener('pointerenter', enter)
+    trigger.addEventListener('pointerleave', leave)
+    panel.addEventListener('pointerenter', enter)
+    panel.addEventListener('pointerleave', leave)
+    return () => {
+      trigger.removeEventListener('pointerenter', enter)
+      trigger.removeEventListener('pointerleave', leave)
+      panel.removeEventListener('pointerenter', enter)
+      panel.removeEventListener('pointerleave', leave)
+      if (timer) clearTimeout(timer)
+    }
+  }, [])
+
+  if (headings.length === 0) return null
+
+  return (
+    <>
+      {/* Always-visible catch strip at the far left. */}
+      <div
+        ref={triggerRef}
+        aria-hidden
+        className="fixed inset-y-0 left-0 z-40 hidden w-6 lg:block"
+      />
+      {/* The slide-in panel. */}
+      <div
+        ref={panelRef}
+        aria-hidden={!open}
+        className={cx(
+          'fixed inset-y-0 left-0 z-40 hidden w-80 transition-transform duration-[var(--dur-base)] ease-out-expo lg:block',
+          open ? 'translate-x-0' : '-translate-x-full',
+        )}
+      >
+        <div className="h-full w-full overflow-y-auto rounded-r-card border border-l-0 border-void-700 bg-void-900/95 py-6 pl-5 pr-4 shadow-card backdrop-blur-md">
+          <TableOfContents headings={headings} />
+        </div>
+      </div>
+    </>
   )
 }

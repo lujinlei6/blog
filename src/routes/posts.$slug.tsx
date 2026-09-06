@@ -6,7 +6,7 @@ import { PostMeta } from '~/components/PostMeta'
 import { Prose } from '~/components/Prose'
 import { ReadingProgress } from '~/components/ReadingProgress'
 import { RelatedPosts } from '~/components/RelatedPosts'
-import { TableOfContents } from '~/components/TableOfContents'
+import { TableOfContents, TableOfContentsDrawer } from '~/components/TableOfContents'
 import { formatDate } from '~/lib/format'
 import { getCategory } from '~/lib/categories'
 import { fetchPost, fetchRelatedPosts } from '~/lib/posts.functions'
@@ -151,15 +151,10 @@ function PostDetail() {
 
             <RelatedPosts posts={related} />
           </div>
-
-          {post.headings.length > 0 ? (
-            <aside className="hidden w-60 shrink-0 lg:block">
-              <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
-                <TableOfContents headings={post.headings} />
-              </div>
-            </aside>
-          ) : null}
         </div>
+
+        {/* Left-edge hover drawer for the desktop outline. */}
+        <TableOfContentsDrawer headings={post.headings} />
       </Container>
     </article>
   )

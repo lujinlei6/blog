@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react'
 
 /**
- * Mouse "reveal" effect, in the style of the MiMo Code hero. A canvas sits over
- * the hero's aurora/cloud backdrop and is filled with a semi-transparent "fog"
- * in the page-surface colour. As the pointer moves, stamps are placed along the
- * path and each frame the fog is repainted, then holes are cut with
- * `destination-out` — so the clouds sharpen where the pointer wipes, then dim
- * back as the stamps age out.
+ * Mouse "reveal" effect, in the style of the MiMo Code hero. A fixed canvas sits
+ * over the entire viewport and is filled with a semi-transparent "fog" in the
+ * page-surface colour. As the pointer moves, stamps are placed along the path
+ * and each frame the fog is repainted, then holes are cut with `destination-out`
+ * — so the backdrop sharpens where the pointer wipes, then dims back as the
+ * stamps age out.
  *
  * Constraints this respects:
  * - SSR-safe: nothing renders on the server but an inert, transparent canvas.
@@ -138,13 +138,9 @@ export function RevealCanvas({ className }: Readonly<{ className?: string }>) {
 
     const onMove = (e: PointerEvent) => {
       const rect = canvas.getBoundingClientRect()
-      // Only stamp when the pointer is within the hero bounds. The canvas is
-      // pointer-events-none so content above stays clickable; we listen on the
-      // window and clip to the rect instead.
-      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
-        last = null
-        return
-      }
+      // Canvas is fixed and covers the whole viewport, so every pointer move
+      // wipes fog. The canvas is pointer-events-none so content above stays
+      // clickable; we listen on the window and map to canvas coordinates.
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
       place(x, y)
