@@ -20,7 +20,7 @@ export const SITE = {
     role: '运维工程师',
     bio: '白天守着监控大盘，晚上啃着官方文档。信奉「一切皆可自动化」，也敬畏每一次生产变更。把命令行里摸出来的经验，一篇篇写进云端。',
     social: [
-      { label: 'GitHub', icon: 'github', href: 'https://github.com/' },
+      { label: 'GitHub', icon: 'github', href: 'https://github.com/lujinlei6' },
       { label: '邮件', icon: 'mail', href: 'mailto:hello@example.com' },
       { label: 'RSS', icon: 'rss', href: '/feed.xml' },
     ],

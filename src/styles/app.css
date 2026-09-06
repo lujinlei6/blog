@@ -81,7 +81,7 @@
 
   /* Cloud pattern fill. A faint pale-blue for the clouds behind the content —
      deep enough to read as a cloud, soft enough to never fight the text. */
-  --cloud-fill: rgb(125 211 252 / 0.06);
+  --cloud-fill: rgb(125 211 252 / 0.16);
 
   /* Prose column width: ~32-35 CJK glyphs per line. The Western 65-75ch
      convention is far too wide for Chinese. */
@@ -146,7 +146,7 @@ html[data-theme='light'] {
   --noise-opacity: 0;
 
   /* Light mode clouds sit just below the pale surface as a soft sky-blue. */
-  --cloud-fill: rgb(56 148 204 / 0.06);
+  --cloud-fill: rgb(56 148 204 / 0.14);
 
   color-scheme: light;
 }

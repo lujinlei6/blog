@@ -50,7 +50,9 @@ export function RevealCanvas({ className }: Readonly<{ className?: string }>) {
     // The fog colour rides the `color` property (set to --color-void-900 in JSX)
     // so `getComputedStyle(...).color` returns the *resolved* value — matching
     // the page surface in both themes, which is what makes the fog invisible.
-    const fog = getComputedStyle(canvas).color
+    // It is mutable: a theme switch changes the resolved value, so we re-read it
+    // and repaint below instead of pinning it once.
+    let fog = getComputedStyle(canvas).color
     // Rebind so the hoisted `paintFog` below sees a non-null value; TS narrows
     // the guard above but not across function-declaration boundaries.
     const c: CanvasRenderingContext2D = ctx
@@ -150,7 +152,28 @@ export function RevealCanvas({ className }: Readonly<{ className?: string }>) {
     resize()
     window.addEventListener('pointermove', onMove, { passive: true })
     window.addEventListener('resize', resize)
+
+    // The fog colour is resolved from a theme-driven CSS variable. Theme toggles
+    // (manual or OS-level) change `data-theme` on <html>, which re-resolves the
+    // variable — so watch that attribute, re-read the colour, and repaint. A
+    // resolved-colour poll would be wasteful; this fires only on actual changes.
+    const themeObserver = new MutationObserver(() => {
+      const next = getComputedStyle(canvas).color
+      if (next === fog) return
+      fog = next
+      // Dump any in-flight stamps: their holes were cut against the old fog
+      // colour, so clearing them avoids a brief mismatch while they fade.
+      stamps.length = 0
+      last = null
+      paintFog()
+    })
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+
     return () => {
+      themeObserver.disconnect()
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('resize', resize)
       if (frame) cancelAnimationFrame(frame)
@@ -162,7 +185,10 @@ export function RevealCanvas({ className }: Readonly<{ className?: string }>) {
       ref={ref}
       aria-hidden
       className={className}
-      style={{ color: 'var(--color-void-900)' }}
+      // Fog colour is one shade deeper than the page surface (--color-void-850
+      // vs the body's --color-void-900), so the resting fog reads as a faint
+      // darker veil and the wipe visibly brightens the clouds beneath it.
+      style={{ color: 'var(--color-void-850)' }}
     />
   )
 }
