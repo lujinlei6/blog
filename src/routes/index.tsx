@@ -3,6 +3,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { Container } from '~/components/Container'
 import { Icon } from '~/components/Icon'
 import { PostCard } from '~/components/PostCard'
+import { RevealCanvas } from '~/components/RevealCanvas'
 import { ScrollReveal } from '~/components/ScrollReveal'
 import { cx } from '~/lib/cx'
 import { fetchCategories, fetchFeaturedPosts, fetchPosts } from '~/lib/posts.functions'
@@ -59,10 +60,15 @@ function Home() {
 
   return (
     <main>
-      <Container as="section" width="content" className="pt-24 pb-20 sm:pt-32">
+      <Container as="section" width="content" className="relative pt-24 pb-20 sm:pt-32">
+        {/* Fog layer over the aurora/cloud backdrop. The pointer wipes it away to
+            reveal the clouds beneath; it is gated behind `.js` so with JS off the
+            hero simply shows the backdrop. Content above sits on the same plane. */}
+        <RevealCanvas className="pointer-events-none absolute inset-0 h-full w-full rounded-card" />
+
         {/* Above the fold on purpose: no ScrollReveal here, because the hero is
             the LCP element and must paint from SSR HTML alone. */}
-        <div className="flex flex-col items-center text-center">
+        <div className="relative flex flex-col items-center text-center">
           <span className="inline-flex items-center gap-2 rounded-pill border border-void-700 bg-void-850/60 px-3.5 py-1.5 font-mono text-[11px] tracking-[0.2em] text-ink-400 uppercase">
             <Icon name="spark" className="h-3 w-3 text-aurora-violet" />
             {SITE.name} / {SITE.nameZh}
