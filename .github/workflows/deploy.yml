@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 两次 push 挨太近时排队执行，避免后一次部署被前一次覆盖到一半
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          # 必须能读懂仓库里 bun.lock 的 lockfileVersion，改动这里要同步本地 bun
+          bun-version: "1.4.2"
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run lint && bun run build
+
+      # 用项目自己锁定的 wrangler（devDependency），而不是第三方 action 自带的版本
+      - run: bunx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
