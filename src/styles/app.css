@@ -79,18 +79,19 @@
   --grid-line: rgb(255 255 255 / 0.032);
   --noise-opacity: 0.028;
 
-  /* Cloud pattern fill. Barely-there clouds behind the content: a hair above the
-     surface in the dark, so they read as depth rather than noise. */
-  --cloud-fill: rgb(255 255 255 / 0.028);
+  /* Cloud pattern fill. A faint pale-blue for the clouds behind the content —
+     deep enough to read as a cloud, soft enough to never fight the text. */
+  --cloud-fill: rgb(125 211 252 / 0.06);
 
   /* Prose column width: ~32-35 CJK glyphs per line. The Western 65-75ch
      convention is far too wide for Chinese. */
   --prose-width: 40rem;
 
-  /* A single cloud tile used as a mask by `.cloud-pattern`. The shape is drawn
-     in black because masks are alpha-driven; the real colour comes from
-     `--cloud-fill`. Sized 320x200 so clouds land sparsely, never as a wall. */
-  --cloud-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200' viewBox='0 0 320 200'%3E%3Cg fill='black'%3E%3Ccircle cx='88' cy='120' r='22'/%3E%3Ccircle cx='126' cy='104' r='32'/%3E%3Ccircle cx='170' cy='120' r='22'/%3E%3Crect x='86' y='116' width='86' height='30' rx='15'/%3E%3C/g%3E%3C/svg%3E");
+  /* Cloud tiles used as masks by `.cloud-pattern`. Shapes are drawn in black
+     because masks are alpha-driven; the real colour comes from `--cloud-fill`.
+     A single 640x400 tile holds several differently-sized, irregularly-placed
+     clouds at varying opacity, so repeating it never reads as a tidy grid. */
+  --cloud-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='400' viewBox='0 0 640 400'%3E%3Cg fill='black'%3E%3Cg opacity='0.9'%3E%3Ccircle cx='120' cy='92' r='26'/%3E%3Ccircle cx='158' cy='72' r='38'/%3E%3Ccircle cx='202' cy='94' r='26'/%3E%3Crect x='116' y='88' width='90' height='34' rx='17'/%3E%3C/g%3E%3Cg opacity='0.55'%3E%3Ccircle cx='420' cy='180' r='16'/%3E%3Ccircle cx='444' cy='168' r='24'/%3E%3Ccircle cx='472' cy='182' r='16'/%3E%3Crect x='418' y='178' width='56' height='22' rx='11'/%3E%3C/g%3E%3Cg opacity='0.7'%3E%3Ccircle cx='560' cy='320' r='20'/%3E%3Ccircle cx='590' cy='306' r='30'/%3E%3Ccircle cx='626' cy='322' r='20'/%3E%3Crect x='558' y='316' width='70' height='28' rx='14'/%3E%3C/g%3E%3Cg opacity='0.5'%3E%3Ccircle cx='40' cy='330' r='18'/%3E%3Ccircle cx='66' cy='318' r='27'/%3E%3Ccircle cx='96' cy='332' r='18'/%3E%3Crect x='38' y='326' width='60' height='24' rx='12'/%3E%3C/g%3E%3Cg opacity='0.4'%3E%3Ccircle cx='330' cy='60' r='14'/%3E%3Ccircle cx='352' cy='50' r='21'/%3E%3Ccircle cx='378' cy='62' r='14'/%3E%3Crect x='328' y='58' width='52' height='20' rx='10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 
   color-scheme: dark;
 }
@@ -144,8 +145,8 @@ html[data-theme='light'] {
   --grid-line: rgb(15 23 42 / 0.045);
   --noise-opacity: 0;
 
-  /* Light mode clouds sit just below the pale surface as a soft grey-blue. */
-  --cloud-fill: rgb(15 23 42 / 0.035);
+  /* Light mode clouds sit just below the pale surface as a soft sky-blue. */
+  --cloud-fill: rgb(56 148 204 / 0.06);
 
   color-scheme: light;
 }
@@ -255,15 +256,17 @@ html[data-theme='light'] {
   /* Faint repeating clouds behind the content. The shape lives in a mask (black
      = opaque, alpha-driven) so the actual colour comes from `background-color`,
      which is the theme variable `--cloud-fill` and therefore re-skins with the
-     mode. The mask tiles at 320px and every tile is a single soft-edged cloud. */
+     mode. The tile is a 640x400 field of several irregularly-placed clouds at
+     differing scales and opacities, so the repeat reads as a scattered sky, not
+     a grid. */
   .cloud-pattern {
     background-color: var(--cloud-fill);
     -webkit-mask-image: var(--cloud-tile);
     mask-image: var(--cloud-tile);
     -webkit-mask-repeat: repeat;
     mask-repeat: repeat;
-    -webkit-mask-size: 320px 200px;
-    mask-size: 320px 200px;
+    -webkit-mask-size: 640px 400px;
+    mask-size: 640px 400px;
   }
 
   .surface-glass {
