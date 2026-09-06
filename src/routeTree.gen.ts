@@ -14,6 +14,8 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
+import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
 import { Route as PostsIndexRouteImport } from './routes/posts.index'
 import { Route as PostsSlugRouteImport } from './routes/posts.$slug'
 
@@ -42,6 +44,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesCategoryRoute = CategoriesCategoryRouteImport.update({
+  id: '/categories/$category',
+  path: '/categories/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostsIndexRoute = PostsIndexRouteImport.update({
   id: '/posts/',
   path: '/posts/',
@@ -59,7 +71,9 @@ export interface FileRoutesByFullPath {
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/categories/': typeof CategoriesIndexRoute
   '/posts/': typeof PostsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -68,7 +82,9 @@ export interface FileRoutesByTo {
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/categories': typeof CategoriesIndexRoute
   '/posts': typeof PostsIndexRoute
 }
 export interface FileRoutesById {
@@ -78,7 +94,9 @@ export interface FileRoutesById {
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/categories/': typeof CategoriesIndexRoute
   '/posts/': typeof PostsIndexRoute
 }
 export interface FileRouteTypes {
@@ -89,7 +107,9 @@ export interface FileRouteTypes {
     | '/feed.xml'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/categories/$category'
     | '/posts/$slug'
+    | '/categories/'
     | '/posts/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,7 +118,9 @@ export interface FileRouteTypes {
     | '/feed.xml'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/categories/$category'
     | '/posts/$slug'
+    | '/categories'
     | '/posts'
   id:
     | '__root__'
@@ -107,7 +129,9 @@ export interface FileRouteTypes {
     | '/feed.xml'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/categories/$category'
     | '/posts/$slug'
+    | '/categories/'
     | '/posts/'
   fileRoutesById: FileRoutesById
 }
@@ -117,7 +141,9 @@ export interface RootRouteChildren {
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  CategoriesCategoryRoute: typeof CategoriesCategoryRoute
   PostsSlugRoute: typeof PostsSlugRoute
+  CategoriesIndexRoute: typeof CategoriesIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
 }
 
@@ -158,6 +184,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/categories/': {
+      id: '/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof CategoriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$category': {
+      id: '/categories/$category'
+      path: '/categories/$category'
+      fullPath: '/categories/$category'
+      preLoaderRoute: typeof CategoriesCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/posts/': {
       id: '/posts/'
       path: '/posts'
@@ -181,7 +221,9 @@ const rootRouteChildren: RootRouteChildren = {
   FeedDotxmlRoute: FeedDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  CategoriesCategoryRoute: CategoriesCategoryRoute,
   PostsSlugRoute: PostsSlugRoute,
+  CategoriesIndexRoute: CategoriesIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
 }
 export const routeTree = rootRouteImport

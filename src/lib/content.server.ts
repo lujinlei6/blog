@@ -1,8 +1,9 @@
 import { parse as parseYaml } from 'yaml'
 import { z } from 'zod'
 
+import { CATEGORIES, getCategory } from '~/lib/categories'
 import { readingMinutes } from '~/lib/reading-time'
-import type { AboutPage, Post, PostWithContent } from '~/lib/types'
+import type { AboutPage, CategorySummary, Post, PostWithContent } from '~/lib/types'
 
 /**
  * Globbed with `?raw` and `eager` so the Markdown is inlined into the server
@@ -48,6 +49,8 @@ const postFrontmatter = z.object({
   date: z.coerce.date(),
   updated: z.coerce.date().optional(),
   description: z.string().min(1).max(200),
+  /** Must exist in src/lib/categories.ts — enforced below, after zod. */
+  category: z.string().optional(),
   tags: z.array(z.string()).default([]),
   cover: z.string().optional(),
   draft: z.boolean().default(false),
@@ -98,6 +101,13 @@ function buildSources(): Source[] {
     // Drafts stay visible locally so they can be previewed before publishing.
     if (fm.draft && import.meta.env.PROD) continue
 
+    if (fm.category !== undefined && !getCategory(fm.category)) {
+      const known = CATEGORIES.map((category) => category.slug).join(', ')
+      throw new Error(
+        `${file}: category "${fm.category}" 未注册。请在 src/lib/categories.ts 的 CATEGORIES 里添加它。已注册：${known}`,
+      )
+    }
+
     sources.push({
       meta: {
         slug,
@@ -107,6 +117,7 @@ function buildSources(): Source[] {
         // string round-trips without depending on the serializer reviving dates.
         date: fm.date.toISOString(),
         updated: fm.updated?.toISOString(),
+        category: fm.category,
         tags: fm.tags,
         cover: fm.cover,
         featured: fm.featured,
@@ -140,6 +151,24 @@ export async function listPosts(): Promise<Post[]> {
   return getSources()
     .map((source) => source.meta)
     .sort((a, b) => b.date.localeCompare(a.date))
+}
+
+/**
+ * Every registry category with its published post count, in registry order.
+ * Categories with zero posts are kept so the taxonomy is browsable up front.
+ */
+export async function listCategories(): Promise<CategorySummary[]> {
+  const posts = await listPosts()
+  return CATEGORIES.map((category) => ({
+    ...category,
+    count: posts.filter((post) => post.category === category.slug).length,
+  }))
+}
+
+/** Newest first, filtered to one registry category. */
+export async function getPostsByCategory(categorySlug: string): Promise<Post[]> {
+  const posts = await listPosts()
+  return posts.filter((post) => post.category === categorySlug)
 }
 
 export async function getPost(slug: string): Promise<PostWithContent | null> {

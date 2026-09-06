@@ -1,13 +1,13 @@
-# VOID · 虚空
+# CLOUD · 云栈
 
-暗色优先的中文技术博客。TanStack Start v1（SSR）+ TanStack Router 文件路由 + Tailwind CSS 4，部署在 Cloudflare Workers。
+运维技术博客，标语：**把踩过的坑，铺成上云的路**。TanStack Start v1（SSR）+ TanStack Router 文件路由 + Tailwind CSS 4，部署在 Cloudflare Workers。
 
-页面：首页 `/`、文章列表 `/posts`、文章详情 `/posts/$slug`、关于 `/about`，外加 `/feed.xml`（RSS 2.0）、`/sitemap.xml`、`/robots.txt`。每页输出 canonical、Open Graph、Twitter Card 与 JSON-LD。
+页面：首页 `/`、知识分类 `/categories`、分类下的文章 `/categories/$category`、文章列表 `/posts`、文章详情 `/posts/$slug`、关于 `/about`，外加 `/feed.xml`（RSS 2.0）、`/sitemap.xml`、`/robots.txt`。每页输出 canonical、Open Graph、Twitter Card 与 JSON-LD。
 
 ## 命令
 
 ```bash
-bun install
+bun install   # 或 npm install
 bun run dev            # http://localhost:3000，SSR 跑在本地 workerd
 bun run build          # vite build && tsc -b，产物在 dist/
 bun run preview        # 本地跑生产构建（workerd）
@@ -26,7 +26,8 @@ title: 标题
 date: 2026-01-01
 updated: 2026-02-01 # 可选
 description: 一句话摘要，直接用作 SEO description（≤200 字）
-tags: [TanStack, CSS]
+category: docker # 分类 slug，见下节；不写则不进任何分类
+tags: [Docker, 容器]
 cover: /cover.png # 可选
 draft: false # 生产构建中 draft 会被排除
 featured: false # true 则进首页 bento 大图位
@@ -34,6 +35,32 @@ featured: false # true 则进首页 bento 大图位
 ```
 
 `content/about.md` 同理，渲染到 `/about`。
+
+## 知识分类（重要）
+
+分类体系集中注册在 **`src/lib/categories.ts`** 的 `CATEGORIES` 数组里。当前已有：Docker、Kubernetes、Nginx、Zabbix、Redis、Linux、Prometheus、Ansible、Shell 脚本、网络、前端。
+
+**以后想新增一个类别（比如 Prometheus），只需两步：**
+
+1. 在 `src/lib/categories.ts` 的数组里加一项：
+
+   ```ts
+   {
+     slug: 'elasticsearch',        // URL 路径段，小写字母/数字/连字符
+     name: 'Elasticsearch',        // 展示名
+     description: '搜索、日志与可观测性的一把好手。', // 分类卡片上的一句话简介
+   },
+   ```
+
+2. 之后写文章时在 frontmatter 里写 `category: elasticsearch` 即可。
+
+完成后导航「分类」页、首页分类区、`/categories/elasticsearch` 页面、文章计数、sitemap 都会自动出现，**不需要改任何其他代码**。
+
+两条保护规则：
+
+- 文章引用了未注册的 category → **构建直接报错**，错误信息里会列出所有已注册的 slug，不用担心拼错悄悄上线。
+- 分类暂时没文章也没关系——分类页会展示「文章还在路上」的占位，等第一篇笔记到位。
+- 站点标题、标语、作者信息等全站常量都在 `src/lib/site.ts`，改一处全站生效。
 
 Markdown 在**构建期**经 unified 管线渲染（GFM + Shiki 高亮 + 标题锚点，管线在 `build/markdown.ts`），**不启用 `rehype-raw`**：正文里的裸 HTML 会被丢弃而非透传。渲染结果以 `?rendered` 模块内联进 worker bundle，运行时不再碰 Shiki——workerd 禁止运行时编译 WASM（Shiki 的 oniguruma 引擎正是这么干的，报 `Wasm code generation disallowed by embedder`），Workers 免费计划单次调用的 CPU 预算也装不下语法编译。阅读时长按中文 300 字/分、拉丁 200 词/分混合计算。
 
@@ -57,7 +84,7 @@ Cloudflare Workers：`wrangler.jsonc` 的 `main` 指向 `@tanstack/react-start/s
 
 ## 已知取舍
 
-- 无搜索、标签页、归档、TOC、相关推荐、评论、分页——均为有意不做。
+- 无搜索、标签页、归档、TOC、相关推荐、评论、分页——均为有意不做（分类页是唯一的内容导航维度）。
 - React Compiler 已移除：本站没有值得编译器优化的客户端重渲染，且与 Start 插件的 AST 变换叠加属未验证组合。
 - `nitro` 仍留在 devDependencies 里，但 `vite.config.ts` 已不引用它：Node 部署路径被 Cloudflare Workers 取代后的遗留。确认 TanStack Start 内部不再间接需要它之后可以删。
 - 默认分享图 `public/og-default.svg` 是 SVG；少数社交爬虫只认 PNG，必要时补一张 1200×630 的 PNG 并改 `seo.ts` 的默认 image。

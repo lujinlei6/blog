@@ -5,17 +5,18 @@ import { Icon } from '~/components/Icon'
 import { PostCard } from '~/components/PostCard'
 import { ScrollReveal } from '~/components/ScrollReveal'
 import { cx } from '~/lib/cx'
-import { fetchFeaturedPosts, fetchPosts } from '~/lib/posts.functions'
+import { fetchCategories, fetchFeaturedPosts, fetchPosts } from '~/lib/posts.functions'
 import { seo } from '~/lib/seo'
 import { SITE } from '~/lib/site'
 
 export const Route = createFileRoute('/')({
   loader: async () => {
-    const [featured, posts] = await Promise.all([
+    const [featured, posts, categories] = await Promise.all([
       fetchFeaturedPosts({ data: { limit: 5 } }),
       fetchPosts(),
+      fetchCategories(),
     ])
-    return { featured, posts }
+    return { featured, posts, categories }
   },
   head: () =>
     seo({
@@ -54,7 +55,7 @@ const BENTO_CELLS = [
 ] as const
 
 function Home() {
-  const { featured, posts } = Route.useLoaderData()
+  const { featured, posts, categories } = Route.useLoaderData()
 
   return (
     <main>
@@ -68,9 +69,9 @@ function Home() {
           </span>
 
           <h1 className="mt-8 text-[2.5rem] leading-[1.15] font-semibold text-ink-100 sm:text-6xl lg:text-display">
-            在噪声里
+            把踩过的坑
             <br />
-            留一块<span className="text-aurora">空白</span>
+            铺成<span className="text-aurora">上云的路</span>
           </h1>
 
           <p className="mt-7 max-w-[34rem] text-lead leading-relaxed text-ink-400">
@@ -79,19 +80,44 @@ function Home() {
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
-              to="/posts"
+              to="/categories"
               className="bg-aurora inline-flex items-center gap-2 rounded-pill px-6 py-3 text-sm font-semibold text-void-950 shadow-glow-violet transition-transform duration-[var(--dur-base)] ease-spring hover:scale-[1.03]"
             >
-              开始阅读
+              浏览知识分类
               <Icon name="arrowRight" className="h-4 w-4" />
             </Link>
             <Link
-              to="/about"
+              to="/posts"
               className="inline-flex items-center gap-2 rounded-pill border border-void-700 bg-void-850/60 px-6 py-3 text-sm text-ink-100 transition-[border-color,background-color] duration-[var(--dur-base)] ease-out-expo hover:border-void-600 hover:bg-void-800"
             >
-              关于 {SITE.name}
+              全部文章
             </Link>
           </div>
+        </div>
+      </Container>
+
+      <Container as="section" className="py-16">
+        <ScrollReveal>
+          <SectionHeading eyebrow="Categories" title="知识分类" accent="violet" />
+        </ScrollReveal>
+
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {categories.slice(0, 12).map((category) => (
+            <ScrollReveal key={category.slug} className="h-full">
+              <Link
+                to="/categories/$category"
+                params={{ category: category.slug }}
+                className="group flex h-full flex-col items-start justify-between gap-4 rounded-card border border-void-700 bg-void-850/60 p-4 transition-[transform,border-color,background-color] duration-[var(--dur-base)] ease-out-expo hover:-translate-y-0.5 hover:border-void-600 hover:bg-void-800/70"
+              >
+                <span className="font-mono text-sm font-semibold tracking-wide text-ink-100 transition-colors duration-[var(--dur-fast)] ease-out-expo group-hover:text-aurora-cyan">
+                  {category.name}
+                </span>
+                <span className="font-mono text-[11px] text-ink-600 tabular-nums">
+                  {category.count} 篇
+                </span>
+              </Link>
+            </ScrollReveal>
+          ))}
         </div>
       </Container>
 

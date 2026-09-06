@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { Icon } from '~/components/Icon'
 import { PostMeta } from '~/components/PostMeta'
 import { cx } from '~/lib/cx'
+import { getCategory } from '~/lib/categories'
 import type { Post } from '~/lib/types'
 
 type PostCardProps = {
@@ -18,6 +19,7 @@ const cardClass =
 
 export function PostCard({ post, size = 'small', className }: Readonly<PostCardProps>) {
   const large = size === 'large'
+  const category = post.category !== undefined ? getCategory(post.category) : undefined
 
   return (
     <Link
@@ -40,8 +42,19 @@ export function PostCard({ post, size = 'small', className }: Readonly<PostCardP
         />
       ) : null}
 
+      {category ? (
+        <span className="w-fit rounded-pill border border-aurora-cyan/40 bg-aurora-cyan/10 px-2.5 py-0.5 font-mono text-[10px] tracking-[0.18em] text-aurora-cyan uppercase">
+          {category.name}
+        </span>
+      ) : null}
+
       {post.featured ? (
-        <span className="w-fit rounded-pill border border-aurora-violet/40 bg-aurora-violet/10 px-2.5 py-0.5 font-mono text-[10px] tracking-[0.18em] text-aurora-violet uppercase">
+        <span
+          className={cx(
+            'w-fit rounded-pill border border-aurora-violet/40 bg-aurora-violet/10 px-2.5 py-0.5 font-mono text-[10px] tracking-[0.18em] text-aurora-violet uppercase',
+            category ? 'mt-2' : undefined,
+          )}
+        >
           精选
         </span>
       ) : null}

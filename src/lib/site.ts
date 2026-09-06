@@ -7,18 +7,18 @@ export const SITE_URL =
     : 'http://localhost:3000'
 
 export const SITE = {
-  name: 'VOID',
-  nameZh: '虚空',
-  tagline: '在噪声里留一块空白',
+  name: 'CLOUD',
+  nameZh: '云栈',
+  tagline: '把踩过的坑，铺成上云的路',
   description:
-    'VOID 是一个关于前端工程、界面设计与技术决策的中文博客。不追热点，只写经得起时间的内容。',
+    'CLOUD 是一名运维工程师的云端自留地：Docker、Kubernetes、Nginx、Zabbix……每一次深夜排障、每一回上线救火，都沉淀成这里可以直接复用的实战经验。不抄文档，只写干货。',
   url: SITE_URL,
   locale: 'zh-CN',
   author: {
     // EDIT ME: 站点常量集中在此文件，改掉下面这几项即可全站生效
-    name: 'Mt342',
-    role: '前端工程师',
-    bio: '写界面，也写关于界面的思考。相信好的工程是把复杂度放回它该待的地方。',
+    name: '小路ops',
+    role: '运维工程师',
+    bio: '白天守着监控大盘，晚上啃着官方文档。信奉「一切皆可自动化」，也敬畏每一次生产变更。把命令行里摸出来的经验，一篇篇写进云端。',
     social: [
       { label: 'GitHub', icon: 'github', href: 'https://github.com/' },
       { label: '邮件', icon: 'mail', href: 'mailto:hello@example.com' },
