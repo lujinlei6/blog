@@ -164,7 +164,7 @@ export async function renderMarkdown(source: string): Promise<string> {
       defaultLanguage: 'text',
       fallbackLanguage: 'text',
       onError: (error) => {
-        console.warn('[VOID] syntax highlighting failed:', error)
+        console.warn('[CLOUD] syntax highlighting failed:', error)
       },
     })
     .use(rehypeSlug)

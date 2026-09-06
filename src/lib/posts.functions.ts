@@ -12,7 +12,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 
-import { getAbout, getFeaturedPosts, getPost, getPostsByCategory, listCategories, listPosts } from '~/lib/content.server'
+import { getAbout, getFeaturedPosts, getPost, getPostsByCategory, getRelatedPosts, listCategories, listPosts } from '~/lib/content.server'
 
 export const fetchPosts = createServerFn({ method: 'GET' }).handler(async () => {
   return listPosts()
@@ -38,6 +38,12 @@ export const fetchPost = createServerFn({ method: 'GET' })
   .validator(z.object({ slug: z.string().min(1) }))
   .handler(async ({ data }) => {
     return getPost(data.slug)
+  })
+
+export const fetchRelatedPosts = createServerFn({ method: 'GET' })
+  .validator(z.object({ slug: z.string().min(1), limit: z.number().int().min(1).max(6) }))
+  .handler(async ({ data }) => {
+    return getRelatedPosts(data.slug, data.limit)
   })
 
 export const fetchAbout = createServerFn({ method: 'GET' }).handler(async () => {

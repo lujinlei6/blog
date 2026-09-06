@@ -71,7 +71,7 @@ function Home() {
           <h1 className="mt-8 text-[2.5rem] leading-[1.15] font-semibold text-ink-100 sm:text-6xl lg:text-display">
             把踩过的坑
             <br />
-            铺成<span className="text-aurora">上云的路</span>
+            铺成<span className="text-aurora-animated">上云的路</span>
           </h1>
 
           <p className="mt-7 max-w-[34rem] text-lead leading-relaxed text-ink-400">

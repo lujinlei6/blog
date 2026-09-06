@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { CATEGORIES, getCategory } from '~/lib/categories'
 import { readingMinutes } from '~/lib/reading-time'
-import type { AboutPage, CategorySummary, Post, PostWithContent } from '~/lib/types'
+import type { AboutPage, CategorySummary, Heading, Post, PostWithContent } from '~/lib/types'
 
 /**
  * Globbed with `?raw` and `eager` so the Markdown is inlined into the server
@@ -176,7 +176,29 @@ export async function getPost(slug: string): Promise<PostWithContent | null> {
   if (!source) return null
 
   const contentHtml = renderedHtml(`/content/posts/${source.meta.slug}.md`, postHtml)
-  return { ...source.meta, contentHtml }
+  return { ...source.meta, contentHtml, headings: extractHeadings(contentHtml) }
+}
+
+/**
+ * Extracts the h2/h3 outline from already-rendered HTML. rehype-slug assigns
+ * each heading an `id`, so the TOC links are plain in-page anchors. Text is
+ * stripped of the trailing `#` that rehype-autolink-headings appends as a
+ * wrapped `.anchor` child.
+ */
+function extractHeadings(html: string): Heading[] {
+  const headings: Heading[] = []
+  const re = /<h([23])[^>]*id="([^"]+)"[^>]*>([\s\S]*?)<\/h\1>/g
+  let match: RegExpExecArray | null
+  while ((match = re.exec(html)) !== null) {
+    const level = Number(match[1]) as 2 | 3
+    const id = match[2]
+    const text = match[3]
+      .replace(/<[^>]+>/g, '')
+      .replace(/[#\s]+$/, '')
+      .trim()
+    if (text) headings.push({ id, text, level })
+  }
+  return headings
 }
 
 /**
@@ -190,8 +212,9 @@ export async function getFeaturedPosts(limit: number): Promise<Post[]> {
   return [...featured, ...filler].slice(0, limit)
 }
 
-/** Newest first, with rendered HTML — the RSS feed ships full content. */
-export async function getFeedPosts(limit: number): Promise<PostWithContent[]> {
+/** Newest first, with rendered HTML — the RSS feed ships full content. The
+    heading outline is omitted: it only exists to drive the article TOC. */
+export async function getFeedPosts(limit: number): Promise<Omit<PostWithContent, 'headings'>[]> {
   const sources = getSources()
     .slice()
     .sort((a, b) => b.meta.date.localeCompare(a.meta.date))
@@ -200,6 +223,39 @@ export async function getFeedPosts(limit: number): Promise<PostWithContent[]> {
     ...source.meta,
     contentHtml: renderedHtml(`/content/posts/${source.meta.slug}.md`, postHtml),
   }))
+}
+
+/**
+ * Related posts for the article footer: same-category posts first, then
+ * tag-overlap matches, newest first, excluding the current post. Falls back to
+ * the newest posts when there is neither signal.
+ */
+export async function getRelatedPosts(slug: string, limit: number): Promise<Post[]> {
+  const posts = await listPosts()
+  const current = posts.find((post) => post.slug === slug)
+  if (!current) return []
+
+  const others = posts.filter((post) => post.slug !== slug)
+
+  const score = (post: Post): number => {
+    let s = 0
+    if (current.category && post.category === current.category) s += 3
+    const overlap = post.tags.filter((tag) => current.tags.includes(tag)).length
+    s += overlap
+    return s
+  }
+
+  const scored = others
+    .map((post) => ({ post, score: score(post) }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date))
+    .map((entry) => entry.post)
+
+  const fill = others
+    .filter((post) => !scored.includes(post))
+    .sort((a, b) => b.date.localeCompare(a.date))
+
+  return [...scored, ...fill].slice(0, limit)
 }
 
 export async function getAbout(): Promise<AboutPage> {

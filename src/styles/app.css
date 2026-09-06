@@ -205,6 +205,33 @@ html[data-theme='light'] {
     color: transparent;
   }
 
+  /* Slow aurora drift on the home hero headline only. The gradient is oversized
+     so a background-position sweep never reveals an edge; the animation is a
+     pure repaint of a static element, so it costs nothing at LCP and is disabled
+     under reduced motion by the global rule below. */
+  .text-aurora-animated {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-aurora-cyan),
+      var(--color-aurora-violet) 40%,
+      var(--color-aurora-rose) 60%,
+      var(--color-aurora-cyan)
+    );
+    background-size: 300% 100%;
+    background-clip: text;
+    color: transparent;
+    animation: aurora-drift 10s linear infinite;
+  }
+
+  @keyframes aurora-drift {
+    from {
+      background-position: 0% 50%;
+    }
+    to {
+      background-position: 300% 50%;
+    }
+  }
+
   /* Fills a surface with the aurora gradient. The stops are light in dark mode
      and deepened in light mode, so the readable foreground flips between them —
      callers use `text-void-950`, which inverts along with the rest of the scale

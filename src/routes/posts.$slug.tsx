@@ -4,17 +4,23 @@ import { Container } from '~/components/Container'
 import { Icon } from '~/components/Icon'
 import { PostMeta } from '~/components/PostMeta'
 import { Prose } from '~/components/Prose'
+import { ReadingProgress } from '~/components/ReadingProgress'
+import { RelatedPosts } from '~/components/RelatedPosts'
+import { TableOfContents } from '~/components/TableOfContents'
 import { formatDate } from '~/lib/format'
 import { getCategory } from '~/lib/categories'
-import { fetchPost } from '~/lib/posts.functions'
+import { fetchPost, fetchRelatedPosts } from '~/lib/posts.functions'
 import { seo } from '~/lib/seo'
 import { SITE, absoluteUrl } from '~/lib/site'
 
 export const Route = createFileRoute('/posts/$slug')({
   loader: async ({ params }) => {
-    const post = await fetchPost({ data: { slug: params.slug } })
+    const [post, related] = await Promise.all([
+      fetchPost({ data: { slug: params.slug } }),
+      fetchRelatedPosts({ data: { slug: params.slug, limit: 3 } }),
+    ])
     if (!post) throw notFound()
-    return { post }
+    return { post, related }
   },
   head: ({ loaderData }) => {
     const post = loaderData?.post
@@ -58,11 +64,13 @@ export const Route = createFileRoute('/posts/$slug')({
 })
 
 function PostDetail() {
-  const { post } = Route.useLoaderData()
+  const { post, related } = Route.useLoaderData()
   const category = post.category !== undefined ? getCategory(post.category) : undefined
 
   return (
     <article>
+      <ReadingProgress />
+
       <Container width="reading" className="pt-14 pb-10 sm:pt-20">
         <Link
           to="/posts"
@@ -105,21 +113,53 @@ function PostDetail() {
       ) : null}
 
       <Container width="reading" className="pb-24">
-        <Prose html={post.contentHtml} className="mt-10" />
+        {post.headings.length > 0 ? (
+          <details className="group mb-6 rounded-card border border-void-700 bg-void-850/60 lg:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-3.5 text-sm text-ink-100 [&::-webkit-details-marker]:hidden">
+              <span className="flex items-center gap-2">
+                <Icon name="tag" className="h-3.5 w-3.5 text-aurora-cyan" />
+                目录
+              </span>
+              <Icon
+                name="arrowRight"
+                className="h-3.5 w-3.5 text-ink-600 transition-transform duration-[var(--dur-base)] ease-out-expo group-open:rotate-90"
+              />
+            </summary>
+            <div className="border-t border-void-700 px-5 py-4">
+              <TableOfContents headings={post.headings} showEyebrow={false} />
+            </div>
+          </details>
+        ) : null}
 
-        <footer className="mt-16 border-t border-void-700 pt-8 text-sm text-ink-400">
-          <p>
-            发布于 {formatDate(post.date)}
-            {post.updated ? `，最后更新于 ${formatDate(post.updated)}` : ''}。
-          </p>
-          <Link
-            to="/posts"
-            className="mt-8 inline-flex items-center gap-1.5 text-ink-100 transition-colors duration-[var(--dur-fast)] ease-out-expo hover:text-aurora-cyan"
-          >
-            <Icon name="arrowLeft" className="h-4 w-4" />
-            浏览全部文章
-          </Link>
-        </footer>
+        <div className="lg:flex lg:gap-12">
+          <div className="min-w-0 flex-1">
+            <Prose html={post.contentHtml} className="mt-10" />
+
+            <footer className="mt-16 border-t border-void-700 pt-8 text-sm text-ink-400">
+              <p>
+                发布于 {formatDate(post.date)}
+                {post.updated ? `，最后更新于 ${formatDate(post.updated)}` : ''}。
+              </p>
+              <Link
+                to="/posts"
+                className="mt-8 inline-flex items-center gap-1.5 text-ink-100 transition-colors duration-[var(--dur-fast)] ease-out-expo hover:text-aurora-cyan"
+              >
+                <Icon name="arrowLeft" className="h-4 w-4" />
+                浏览全部文章
+              </Link>
+            </footer>
+
+            <RelatedPosts posts={related} />
+          </div>
+
+          {post.headings.length > 0 ? (
+            <aside className="hidden w-60 shrink-0 lg:block">
+              <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
+                <TableOfContents headings={post.headings} />
+              </div>
+            </aside>
+          ) : null}
+        </div>
       </Container>
     </article>
   )

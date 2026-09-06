@@ -4,8 +4,8 @@
 
 .prose {
   max-width: var(--prose-width);
-  font-size: 1.0625rem;
-  line-height: 1.8;
+  font-size: 1.15625rem;
+  line-height: 1.82;
   letter-spacing: 0.01em;
   color: var(--color-ink-100);
   /* Justified Chinese produces rivers of whitespace because every glyph is the
@@ -31,13 +31,13 @@
 
 .prose h2 {
   margin-top: 2.4em;
-  font-size: 1.625rem;
+  font-size: 1.75rem;
   line-height: 1.35;
 }
 
 .prose h3 {
   margin-top: 2em;
-  font-size: 1.25rem;
+  font-size: 1.3125rem;
   line-height: 1.4;
 }
 

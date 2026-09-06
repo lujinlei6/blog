@@ -28,6 +28,14 @@ export type CategorySummary = Category & { count: number }
 
 export type PostWithContent = Post & {
   contentHtml: string
+  /** Heading outline extracted from the rendered HTML, for the article TOC. */
+  headings: Heading[]
+}
+
+export type Heading = {
+  id: string
+  text: string
+  level: 2 | 3
 }
 
 export type AboutPage = {
