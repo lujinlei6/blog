@@ -79,9 +79,18 @@
   --grid-line: rgb(255 255 255 / 0.032);
   --noise-opacity: 0.028;
 
+  /* Cloud pattern fill. Barely-there clouds behind the content: a hair above the
+     surface in the dark, so they read as depth rather than noise. */
+  --cloud-fill: rgb(255 255 255 / 0.028);
+
   /* Prose column width: ~32-35 CJK glyphs per line. The Western 65-75ch
      convention is far too wide for Chinese. */
   --prose-width: 40rem;
+
+  /* A single cloud tile used as a mask by `.cloud-pattern`. The shape is drawn
+     in black because masks are alpha-driven; the real colour comes from
+     `--cloud-fill`. Sized 320x200 so clouds land sparsely, never as a wall. */
+  --cloud-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200' viewBox='0 0 320 200'%3E%3Cg fill='black'%3E%3Ccircle cx='88' cy='120' r='22'/%3E%3Ccircle cx='126' cy='104' r='32'/%3E%3Ccircle cx='170' cy='120' r='22'/%3E%3Crect x='86' y='116' width='86' height='30' rx='15'/%3E%3C/g%3E%3C/svg%3E");
 
   color-scheme: dark;
 }
@@ -134,6 +143,9 @@ html[data-theme='light'] {
   --aurora-pool-rose: rgb(190 24 93 / 0.05);
   --grid-line: rgb(15 23 42 / 0.045);
   --noise-opacity: 0;
+
+  /* Light mode clouds sit just below the pale surface as a soft grey-blue. */
+  --cloud-fill: rgb(15 23 42 / 0.035);
 
   color-scheme: light;
 }
@@ -238,6 +250,20 @@ html[data-theme='light'] {
      and stays correct in both. */
   .bg-aurora {
     background-image: var(--gradient-aurora);
+  }
+
+  /* Faint repeating clouds behind the content. The shape lives in a mask (black
+     = opaque, alpha-driven) so the actual colour comes from `background-color`,
+     which is the theme variable `--cloud-fill` and therefore re-skins with the
+     mode. The mask tiles at 320px and every tile is a single soft-edged cloud. */
+  .cloud-pattern {
+    background-color: var(--cloud-fill);
+    -webkit-mask-image: var(--cloud-tile);
+    mask-image: var(--cloud-tile);
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    -webkit-mask-size: 320px 200px;
+    mask-size: 320px 200px;
   }
 
   .surface-glass {

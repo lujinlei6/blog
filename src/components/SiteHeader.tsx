@@ -22,7 +22,7 @@ export function SiteHeader() {
         <Link to="/" className="group flex items-center gap-2.5" aria-label={`${SITE.name} 首页`}>
           <svg
             viewBox="0 0 64 64"
-            className="h-7 w-7 shrink-0 transition-transform duration-[var(--dur-slow)] ease-spring group-hover:rotate-90"
+            className="h-7 w-7 shrink-0 transition-transform duration-[var(--dur-slow)] ease-spring group-hover:-translate-y-0.5"
             aria-hidden
           >
             <defs>
@@ -34,8 +34,14 @@ export function SiteHeader() {
                 <stop offset="1" style={{ stopColor: 'var(--color-aurora-rose)' }} />
               </linearGradient>
             </defs>
-            <circle cx="32" cy="32" r="20" fill="none" stroke="url(#hdr-aurora)" strokeWidth="6" />
-            <circle cx="32" cy="32" r="6" fill="url(#hdr-aurora)" />
+            {/* A cloud built from three overlapping circles and a flat base, all
+                sharing one gradient fill so the lobes read as one silhouette. */}
+            <g fill="url(#hdr-aurora)">
+              <circle cx="22" cy="40" r="11" />
+              <circle cx="36" cy="34" r="15" />
+              <circle cx="48" cy="42" r="10" />
+              <rect x="20" y="38" width="30" height="13" rx="6" />
+            </g>
           </svg>
           <span className="font-mono text-base font-semibold tracking-[0.18em] text-ink-100">
             {SITE.name}

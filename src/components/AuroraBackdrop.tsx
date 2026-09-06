@@ -43,6 +43,11 @@ export function AuroraBackdrop() {
           WebkitMaskImage: GRID_MASK,
         }}
       />
+      {/* Faint clouds. The mask tiles a single soft-edged cloud across the
+          viewport; the fill colour is `--cloud-fill`, so it stays a whisper in
+          both themes. Opacity is low enough that tiling over content never
+          hurts readability. */}
+      <div className="cloud-pattern absolute inset-0" />
       <div
         className="absolute inset-0 mix-blend-overlay"
         style={{ backgroundImage: NOISE, opacity: 'var(--noise-opacity)' }}
