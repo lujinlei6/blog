@@ -32,3 +32,5 @@ dist-ssr
 
 # Wrangler local state
 .wrangler/
+# WorkBuddy local session data
+.workbuddy/

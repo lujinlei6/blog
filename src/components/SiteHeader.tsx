@@ -9,15 +9,16 @@ const linkClass =
 const linkActiveClass = 'text-ink-100'
 
 /**
- * Nav is three items, so they fit at 320px and no hamburger menu is needed.
+ * Nav is four items. To keep the 320px fit without a hamburger menu, the `/`
+ * separators hide below `sm` and the nav gap tightens to `gap-1` there —
+ * the two tweaks together reclaim roughly the width of the extra item.
  * The toggle is the header's only client-interactive part and is sized `h-8`
- * rather than the footer's `h-9` to keep that 320px fit: logo + nav + toggle
- * leaves ~18px of slack against the 280px the px-5 container allows.
+ * rather than the footer's `h-9` to keep that fit.
  */
 export function SiteHeader() {
   return (
     <header className="surface-glass sticky top-0 z-50 border-x-0 border-t-0">
-      <Container as="div" className="flex h-16 items-center justify-between gap-6">
+      <Container as="div" className="flex h-16 items-center justify-between gap-4">
         <Link to="/" className="group flex items-center gap-2.5" aria-label={`${SITE.name} 首页`}>
           <svg
             viewBox="0 0 64 64"
@@ -51,13 +52,23 @@ export function SiteHeader() {
             >
               首页
             </Link>
-            <span aria-hidden className="text-void-600">
+            <span aria-hidden className="hidden text-void-600 sm:inline">
+              /
+            </span>
+            <Link
+              to="/categories"
+              activeProps={{ className: linkActiveClass }}
+              className={linkClass}
+            >
+              分类
+            </Link>
+            <span aria-hidden className="hidden text-void-600 sm:inline">
               /
             </span>
             <Link to="/posts" activeProps={{ className: linkActiveClass }} className={linkClass}>
               文章
             </Link>
-            <span aria-hidden className="text-void-600">
+            <span aria-hidden className="hidden text-void-600 sm:inline">
               /
             </span>
             <Link to="/about" activeProps={{ className: linkActiveClass }} className={linkClass}>

@@ -2,6 +2,7 @@
 title: React 19 之后，前端状态管理还剩下什么
 date: 2026-04-14
 description: 服务端状态、客户端状态、URL 状态、表单状态——这四类东西过去被塞进同一个 store。React 19 和现代路由框架把它们拆开之后，全局状态库的适用范围比想象中小得多。
+category: frontend
 tags:
   - React
   - 状态管理

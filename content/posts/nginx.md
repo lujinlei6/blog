@@ -1,11 +1,12 @@
 ---
 title: nginx源码编译安装
 date: 2026-09-06
-description: 把西文排版经验直接套用到中文上，几乎每一条都会出错。这十条是我在真实项目里反复验证过的中文网页排版约束，附可以直接抄的 CSS。
+description: 从编译依赖、企业级 configure 参数到 systemd 托管与生产目录规范，一篇把 Nginx 源码安装从零到生产讲透的实战笔记。
+category: nginx
 tags:
-  - 排版
-  - CSS
-  - 中文
+  - nginx
+  - 编译安装
+  - LNMP
 ---
 
 

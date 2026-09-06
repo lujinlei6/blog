@@ -2,6 +2,7 @@
 title: 用 Tailwind 4 的 @theme 搭一套暗色设计系统
 date: 2026-06-02
 description: Tailwind 4 把配置从 JS 搬进了 CSS，@theme 成了唯一的真相来源。这篇讲怎么用它搭一套有纪律的暗色系统，而不是堆一堆一次性色值。
+category: frontend
 tags:
   - Tailwind
   - 设计系统

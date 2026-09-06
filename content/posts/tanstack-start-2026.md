@@ -2,6 +2,7 @@
 title: 为什么我把博客迁到了 TanStack Start
 date: 2026-08-28
 description: TanStack Start 在 v1 正式版之后终于值得认真对待。这篇记录我从 Next.js 迁移过来的完整决策过程，以及 client-first 架构到底解决了什么问题。
+category: frontend
 tags:
   - TanStack
   - React

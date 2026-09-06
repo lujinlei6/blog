@@ -5,6 +5,7 @@ import { Icon } from '~/components/Icon'
 import { PostMeta } from '~/components/PostMeta'
 import { Prose } from '~/components/Prose'
 import { formatDate } from '~/lib/format'
+import { getCategory } from '~/lib/categories'
 import { fetchPost } from '~/lib/posts.functions'
 import { seo } from '~/lib/seo'
 import { SITE, absoluteUrl } from '~/lib/site'
@@ -47,7 +48,9 @@ export const Route = createFileRoute('/posts/$slug')({
         },
         publisher: { '@type': 'Organization', name: SITE.name },
         keywords: post.tags.join(', '),
-        articleSection: post.tags,
+        articleSection: post.category
+          ? [getCategory(post.category)?.name, ...post.tags].filter(Boolean)
+          : post.tags,
       },
     })
   },
@@ -56,6 +59,7 @@ export const Route = createFileRoute('/posts/$slug')({
 
 function PostDetail() {
   const { post } = Route.useLoaderData()
+  const category = post.category !== undefined ? getCategory(post.category) : undefined
 
   return (
     <article>
@@ -67,6 +71,17 @@ function PostDetail() {
           <Icon name="arrowLeft" className="h-3.5 w-3.5" />
           返回文章列表
         </Link>
+
+        {category ? (
+          <Link
+            to="/categories/$category"
+            params={{ category: category.slug }}
+            className="mt-6 inline-flex items-center gap-1.5 rounded-pill border border-aurora-cyan/40 bg-aurora-cyan/10 px-3 py-1 font-mono text-[11px] tracking-[0.18em] text-aurora-cyan uppercase transition-[border-color,background-color] duration-[var(--dur-fast)] ease-out-expo hover:border-aurora-cyan/70 hover:bg-aurora-cyan/20"
+          >
+            <Icon name="tag" className="h-3 w-3" />
+            {category.name}
+          </Link>
+        ) : null}
 
         <div className="rule-aurora mt-8 w-20" aria-hidden />
 
