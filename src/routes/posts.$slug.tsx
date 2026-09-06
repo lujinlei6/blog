@@ -97,6 +97,8 @@ function PostDetail() {
           <img
             src={post.cover}
             alt=""
+            loading="lazy"
+            decoding="async"
             className="h-auto w-full rounded-card border border-void-700 object-cover shadow-card"
           />
         </Container>

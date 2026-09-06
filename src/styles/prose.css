@@ -211,11 +211,13 @@ html[data-theme='light'] .prose pre span {
   content: '#';
   margin-left: 0.4em;
   color: var(--color-void-600);
-  opacity: 0;
-  transition: opacity var(--dur-fast) var(--ease-out-expo);
+  /* Always visible so touch and keyboard users can find the permalink; the
+     low contrast keeps it from competing with the heading text. */
+  transition: color var(--dur-fast) var(--ease-out-expo);
 }
 .prose h2:hover .anchor::after,
 .prose h3:hover .anchor::after,
-.prose h4:hover .anchor::after {
-  opacity: 1;
+.prose h4:hover .anchor::after,
+.prose .anchor:focus-visible::after {
+  color: var(--color-aurora-cyan);
 }

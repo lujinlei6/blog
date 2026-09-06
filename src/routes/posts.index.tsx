@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 
 import { Container } from '~/components/Container'
 import { PostCard } from '~/components/PostCard'
@@ -59,12 +59,13 @@ function PostsIndex() {
 
       {/* Category filter: links out to the per-category pages rather than doing
           client-side filtering, so each hop is a real URL that stays shareable
-          and crawlable. */}
+          and crawlable. Link (not <a>) so navigation stays client-side. */}
       <div className="mt-8 flex flex-wrap gap-2">
         {categories.map((category) => (
-          <a
+          <Link
             key={category.slug}
-            href={`/categories/${category.slug}`}
+            to="/categories/$category"
+            params={{ category: category.slug }}
             className={cx(
               'inline-flex items-center gap-1.5 rounded-pill border border-void-700 bg-void-850/60 px-4 py-2',
               'font-mono text-xs text-ink-400 transition-[border-color,background-color,color] duration-[var(--dur-fast)] ease-out-expo',
@@ -73,7 +74,7 @@ function PostsIndex() {
           >
             {category.name}
             <span className="text-ink-600 tabular-nums">{category.count}</span>
-          </a>
+          </Link>
         ))}
       </div>
 
