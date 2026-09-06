@@ -25,11 +25,11 @@
 
   <circle cx="118" cy="150" r="34" fill="none" stroke="url(#aurora)" stroke-width="10"/>
   <circle cx="118" cy="150" r="10" fill="url(#aurora)"/>
-  <text x="176" y="164" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="40" font-weight="600" letter-spacing="12" fill="#eceaf4">VOID</text>
+  <text x="176" y="164" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="40" font-weight="600" letter-spacing="12" fill="#eceaf4">CLOUD</text>
 
-  <text x="112" y="348" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="72" font-weight="600" fill="#eceaf4">在噪声里</text>
-  <text x="112" y="440" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="72" font-weight="600" fill="url(#aurora)">留一块空白</text>
+  <text x="112" y="348" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="72" font-weight="600" fill="#eceaf4">把踩过的坑</text>
+  <text x="112" y="440" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="72" font-weight="600" fill="url(#aurora)">铺成上云的路</text>
 
   <rect x="112" y="496" width="96" height="3" fill="url(#aurora)"/>
-  <text x="112" y="552" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="26" fill="#a3a1b8">前端工程 · 界面设计 · 技术决策</text>
+  <text x="112" y="552" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif" font-size="26" fill="#a3a1b8">Docker · Kubernetes · Nginx · Zabbix</text>
 </svg>

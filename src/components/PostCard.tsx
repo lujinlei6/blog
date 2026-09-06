@@ -59,14 +59,14 @@ export function PostCard({ post, size = 'small', className }: Readonly<PostCardP
         </span>
       ) : null}
 
-      <h3
+      <h2
         className={cx(
           'font-semibold text-ink-100 transition-colors duration-[var(--dur-fast)] ease-out-expo group-hover:text-ink-50',
           large ? 'mt-6 text-3xl leading-[1.3] sm:text-[2.5rem]' : 'mt-3 text-lg leading-snug',
         )}
       >
         {post.title}
-      </h3>
+      </h2>
 
       <p
         className={cx(

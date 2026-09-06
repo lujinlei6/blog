@@ -15,7 +15,7 @@ export function ErrorFallback({ error }: ErrorComponentProps) {
     return <NotFound />
   }
 
-  console.error('[VOID] route error:', error)
+  console.error('[CLOUD] route error:', error)
 
   return (
     <Container

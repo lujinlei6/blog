@@ -2,9 +2,9 @@
  * Theme resolution lives here so the pre-paint inline script and the toggle
  * button cannot drift apart. Only `INLINE_THEME_SCRIPT` is injected into the
  * document; `ThemeToggle` imports the key and the cycle order, then calls back
- * into the script's own resolver via `window.__voidTheme`.
+ * into the script's own resolver via `window.__cloudTheme`.
  */
-export const THEME_STORAGE_KEY = 'void-theme'
+export const THEME_STORAGE_KEY = 'cloud-theme'
 
 export type ThemePreference = 'dark' | 'light' | 'system'
 
@@ -28,7 +28,7 @@ declare global {
      * preference to apply it directly instead of reading storage — that is what
      * keeps the toggle working in private mode, where the write throws.
      */
-    __voidTheme?: (preference?: ThemePreference) => void
+    __cloudTheme?: (preference?: ThemePreference) => void
   }
 }
 
@@ -65,7 +65,7 @@ export const INLINE_THEME_SCRIPT = `(function () {
       meta.setAttribute('content', theme === 'light' ? '${THEME_COLOR.light}' : '${THEME_COLOR.dark}');
     }
   }
-  window.__voidTheme = apply;
+  window.__cloudTheme = apply;
   mq.addEventListener('change', function () {
     apply();
   });

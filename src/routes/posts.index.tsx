@@ -66,7 +66,7 @@ function PostsIndex() {
             key={category.slug}
             href={`/categories/${category.slug}`}
             className={cx(
-              'inline-flex items-center gap-1.5 rounded-pill border border-void-700 bg-void-850/60 px-3 py-1.5',
+              'inline-flex items-center gap-1.5 rounded-pill border border-void-700 bg-void-850/60 px-4 py-2',
               'font-mono text-xs text-ink-400 transition-[border-color,background-color,color] duration-[var(--dur-fast)] ease-out-expo',
               'hover:border-void-600 hover:bg-void-800 hover:text-ink-100',
             )}

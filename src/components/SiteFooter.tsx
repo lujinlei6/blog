@@ -26,7 +26,7 @@ export function SiteFooter() {
                   href={item.href}
                   title={item.label}
                   aria-label={item.label}
-                  className="surface-glass flex h-9 w-9 items-center justify-center rounded-[var(--radius-card)] text-ink-400 transition-all duration-[var(--dur-base)] ease-out-expo hover:-translate-y-0.5 hover:text-aurora-cyan hover:shadow-glow-cyan"
+                  className="surface-glass flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] text-ink-400 transition-all duration-[var(--dur-base)] ease-out-expo hover:-translate-y-0.5 hover:text-aurora-cyan hover:shadow-glow-cyan"
                 >
                   <Icon name={item.icon} className="h-4 w-4" />
                 </a>

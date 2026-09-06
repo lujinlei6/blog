@@ -67,9 +67,15 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <script dangerouslySetInnerHTML={{ __html: INLINE_THEME_SCRIPT }} />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-pill focus:bg-aurora focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-void-950 focus:shadow-glow-violet"
+        >
+          跳到主要内容
+        </a>
         <AuroraBackdrop />
         <SiteHeader />
-        <div className="flex flex-1 flex-col">{children}</div>
+        <div id="main" className="flex flex-1 flex-col">{children}</div>
         <SiteFooter />
         <Scripts />
       </body>

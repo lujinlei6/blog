@@ -196,6 +196,8 @@ html[data-theme='light'] .prose pre span {
 }
 
 .prose img {
+  max-width: 100%;
+  height: auto;
   border-radius: var(--radius-card);
   border: 1px solid var(--color-void-700);
 }

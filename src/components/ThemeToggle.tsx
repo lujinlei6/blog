@@ -35,7 +35,7 @@ export function ThemeToggle() {
       // still switches this session, and a reload falls back to the system
       // preference, which is the right degradation.
     }
-    window.__voidTheme?.(next)
+    window.__cloudTheme?.(next)
   }
 
   return (
@@ -43,7 +43,7 @@ export function ThemeToggle() {
       type="button"
       onClick={cycle}
       aria-label="切换主题"
-      className="theme-toggle surface-glass h-8 w-8 items-center justify-center rounded-card text-ink-400 transition-colors duration-[var(--dur-fast)] ease-out-expo hover:text-ink-100"
+      className="theme-toggle surface-glass h-10 w-10 items-center justify-center rounded-card text-ink-400 transition-colors duration-[var(--dur-fast)] ease-out-expo hover:text-ink-100"
     >
       <span className="theme-icon theme-icon-dark">
         <Icon name={ICON.dark} className="h-4 w-4" />
