@@ -5,10 +5,6 @@ description: 使用 MetalLB 为 Kubernetes Service 提供 LoadBalancer 能力，
 category: Kubernetes
 tags:
   - Kubernetes
-  - MetalLB
-  - LoadBalancer
-  - Service
-  - 网络
 featured: true
 ---
 
