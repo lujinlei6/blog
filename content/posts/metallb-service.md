@@ -2,7 +2,7 @@
 title: MetalLB 实现访问 Kubernetes 内部 Pod
 date: 2026-09-14
 description: 使用 MetalLB 为 Kubernetes Service 提供 LoadBalancer 能力，实现集群外部访问内部 Pod，并理解 Layer2 模式下的流量转发原理
-category: Kubernetes
+category: kubernetes
 tags:
   - Kubernetes
 featured: true
