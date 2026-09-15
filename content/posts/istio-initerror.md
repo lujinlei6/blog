@@ -1,7 +1,7 @@
 ---
 title: Istio 排查实录：istio-init 容器 CrashLoopBackOff 之 iptables nat 表初始化失败
 date: 2026-09-15
-description: 在 Kubernetes 1.30 集群上为 Pod 注入 Istio sidecar 后，istio-init 容器反复崩溃，报 iptables-restore: unable to initialize table 'nat'。本文记录完整排查过程与根因分析：iptables 的 legacy 与 nftables 双后端机制
+description: "在 Kubernetes 1.30 集群上为 Pod 注入 Istio sidecar 后，istio-init 容器反复崩溃，报 iptables-restore: unable to initialize table 'nat'。本文记录完整排查过程与根因分析：iptables 的 legacy 与 nftables 双后端机制"
 category: kubernetes
 tags:
   - Kubernetes
